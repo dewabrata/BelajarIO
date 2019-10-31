@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class ToDoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    public static int TIPE_UI_PERTAMA =0 ;
+
 
 
     private ArrayList<ModelTDL> dataItemList;

@@ -15,6 +15,11 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.developer.filepicker.controller.DialogSelectionListener;
+import com.developer.filepicker.model.DialogConfigs;
+import com.developer.filepicker.model.DialogProperties;
+import com.developer.filepicker.view.FilePickerDialog;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,6 +52,28 @@ public class ToDoListActivity extends AppCompatActivity {
 
         dummy = new Date();
 
+
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+
+        final FilePickerDialog dialog = new FilePickerDialog(ToDoListActivity.this,properties);
+        dialog.setTitle("Pilih file csv");
+
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                //files is the array of the paths of files selected by the Application User.
+                setList(files[0]);
+            }
+        });
+
+
+
         txtDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
@@ -64,14 +91,16 @@ public class ToDoListActivity extends AppCompatActivity {
 
                 tulis(model);
 
-                setList();
+
             }
         });
 
         btnBuka.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setList();
+
+                dialog.show();
+
             }
         });
     }
@@ -96,9 +125,9 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
 
-    public ArrayList<ModelTDL> baca() {
+    public ArrayList<ModelTDL> baca(String fileName) {
         ArrayList<ModelTDL> todoList = new ArrayList<>();
-        String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/todolistjuara.txt";
+
         try {
 
 
@@ -136,8 +165,8 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
 
-    public void setList(){
-        ToDoListAdapter itemArrayAdapter = new ToDoListAdapter( baca());
+    public void setList(String fileName){
+        ToDoListAdapter itemArrayAdapter = new ToDoListAdapter( baca(fileName));
 
         lstData.setLayoutManager(new LinearLayoutManager(this));
         lstData.setItemAnimator(new DefaultItemAnimator());
